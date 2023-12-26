@@ -9,7 +9,7 @@ public class Manager extends Employee{
 	}
 	
 	public Manager(String login, String password, Language language, String id, String fullName, int salary, ManagerType managerType) {
-		super();
+		super(login, password, language, id, fullName, salary);
 		this.id = id;
 		this.fullName = fullName;
 		this.salary = salary;
@@ -49,6 +49,25 @@ public class Manager extends Employee{
 		public String sendMessage(Employee employee, String textMessage) {
 			return "Message sent to " + employee  + ": " + textMessage;
 		}
+		
+	    public void receiveComplaint(Teacher teacher, Student student, Complaint complaint) {
+	        switch (complaint.getUrgencyLevel()) {
+	            case LOW:
+	                System.out.println("Dean received a LOW urgency complaint from " + teacher.getTeacherName() +
+	                        " regarding student " + student.getStudentName() + ": " + complaint.getComplaintText());
+	                break;
+	            case MEDIUM:
+	                System.out.println("Dean received a MEDIUM urgency complaint from " + teacher.getTeacherName() +
+	                        " regarding student " + student.getStudentName() + ": " + complaint.getComplaintText());
+	                break;
+	            case HIGH:
+	                System.out.println("Dean received a HIGH urgency complaint from " + teacher.getTeacherName() +
+	                        " regarding student " + student.getStudentName() + ": " + complaint.getComplaintText());
+	                break;
+	            default:
+	                System.out.println("Invalid urgency level");
+	        }
+	    }
 
 	 
 	
@@ -58,7 +77,6 @@ public class Manager extends Employee{
 	
 	@Override
 	public String report() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
