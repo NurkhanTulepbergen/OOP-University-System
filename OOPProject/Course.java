@@ -10,12 +10,11 @@ public class Course implements Serializable {
 	public TypeOfCourse typeCourse;
 	private String preRequisite;
 	public Period period;
-	public String teacher;
-    private static final int MAX_ENROLLMENT = 30;
+	public Teacher teacher;
     
     public Course() {}
     
-    public Course(String disciplineName, int credit, int ect, String idCourse, TypeOfCourse typeCourse, String preRequisite, Period period, String teacher) {
+    public Course(String disciplineName, int credit, int ect, String idCourse, TypeOfCourse typeCourse, String preRequisite, Period period, Teacher teacher) {
     	this.disciplineName = disciplineName;
     	this.credit = credit;
     	this.ect = ect;
@@ -26,7 +25,7 @@ public class Course implements Serializable {
     	this.teacher = teacher;
     }
     
-    public Course(String disciplineName, int credit, int ect, String idCourse, TypeOfCourse typeCourse, Period period, String teacher) {
+    public Course(String disciplineName, int credit, int ect, String idCourse, TypeOfCourse typeCourse, Period period, Teacher teacher) {
     	this.disciplineName = disciplineName;
     	this.credit = credit;
     	this.ect = ect;
@@ -50,27 +49,9 @@ public class Course implements Serializable {
         this.preRequisite = preRequisite;
     }
  
-    public String getTeacher() {
+    public Teacher getTeacher() {
     	return teacher;
     }
-
-    public boolean isFull() {
-        return Database.enrolledStudents.size() >= MAX_ENROLLMENT;
-    }
-    
-    public void enrollStudent(Student studentId) {
-        if (!isFull()) {
-            Database.enrolledStudents.add(studentId);
-            System.out.println("Student " + studentId + " enrolled in course " + idCourse);
-        } else {
-            System.out.println("Course " + idCourse + " is full. Cannot enroll more students.");
-        }
-    }
-    
-    public Vector<Student> getEnrolledStudents() {
-        return Database.enrolledStudents;
-    }
-
     
     public String toString() {
     		return "Course: name: " + disciplineName + ", code: " + idCourse + 
