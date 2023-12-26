@@ -1,48 +1,38 @@
-package OOPProject;
+package projects;
 import java.io.Serializable;
 import java.util.Vector;
 
-public class Student extends User implements StudentMove, Serializable  {
+public abstract class Student extends User implements StudentMove, Serializable  {
 	private String id;
 	public String fullName;
 	public School school;
 	public int yearOfStudy;
 	public Transcript transcript;
-	public Period period;
     private int totalCredits = 0;
     private int totalFailures = 0;
-    public Organizations inOrganization;
+    public String educationalLevel = "Bachelor";
+	
 	public Student() {}
 	
-    public Student(String login, String password, Language language, String id, String fullName, School school, int yearOfStudy, Period period) {
+    public Student(String login, String password, Language language, String id, String fullName, School school, int yearOfStudy) {
     	super(login, password, language);
         this.id = id;
         this.fullName = fullName;
         this.school = school;
         this.yearOfStudy = yearOfStudy;
-        this.period = period;
-        inOrganization = null;
+        }
+    
+    public String getStudentName() {
+    	return fullName;
     }
 	
-	public void joinToOrganization(Organizations o, Student s) {
-		DataBase.organizations.put(o, s);
-		this.inOrganization = o;
-	}
-	public Organizations getInOrganization() {
-		return inOrganization;
-	}
-	public String getFullName() {
-		return fullName;
-	}
-	public String getId() {
-		return id;
-	}
+
     @Override
     public boolean registerCourse(Course course) {
         if (totalCredits + course.credit <= 21) {
-            Course.coursesForStudent.put(this, course);
+            Database.courses.add(course);
             totalCredits += course.credit;
-            System.out.println("Course registered: " + course.disciplineName);
+            System.out.println("Succefull registered course " + course.disciplineName);
             return true;
         } else {
             System.out.println("Error: Student can't register in more than 21 credits.");
@@ -51,8 +41,8 @@ public class Student extends User implements StudentMove, Serializable  {
     }
     
     public boolean dropCourse(Course course) {
-        if (Course.coursesForStudent.containsValue(course)) {
-            Course.coursesForStudent.remove(course);
+        if (Database.courses.contains(course)) {
+            Database.courses.remove(course);
             totalCredits -= course.credit;
             return true;
         } else {
@@ -61,100 +51,73 @@ public class Student extends User implements StudentMove, Serializable  {
         }
     }
     
-    public boolean takeExam(Course course, Mark mark) {
-        if (Course.courses.contains(course)) {
-            int grade = mark.getMark();
-            if (grade < 50) {
-                totalFailures++;
-                if (totalFailures > 3) {
-                    System.out.println("Error: Student can't fail more than 3 times.");
-                    totalFailures--; // Revert the count since the failure limit is exceeded
-                    return false;
-                }
-            }
-            return true;
-        } else {
-            System.out.println("Error: Course not found.");
-            return false;
+
+    public void viewCourses() {
+        System.out.println("Available Courses:");
+        for (Course course : Database.courses) {
+            System.out.println(course.toString());
         }
     }
 
-    @Override
-    public void viewCourses(Vector<Course> courses) {
-        if (courses.isEmpty()) {
-            System.out.println("No courses available.");
-        } else {
-            System.out.println("Courses:");
-            for (Course course : courses) {
-                System.out.println(course.disciplineName);
-            }
+    public void teacherInfo() {
+        System.out.println("Teacher Information: ");
+        for(Teacher teacher : Database.teachers) {
+        	System.out.println(teacher.toString());
         }
     }
-    /*
-    @Override
-    public void teacherInfo(Vector<Teacher> teachers) {
-        if (teachers.isEmpty()) {
-            System.out.println("No teachers available.");
-        } else {
-            System.out.println("Teachers:");
-            for (Teacher teacher : teachers) {
-                System.out.println("Name: " + teacher.fullName + ", Course: " + teacher.course);
-            }
-        }
-    }
-    */
-    @Override
-    public void viewMarks(Vector<Mark> marks) {
-        if (marks.isEmpty()) {
-            System.out.println("No marks available.");
-        } else {
-            System.out.println("Marks:");
-            for (Mark mark : marks) {
-                System.out.println("Course: " + mark.course.disciplineName + ", Mark: " + mark.getMark());
+
+    public void viewMarks(String disciplineName) {
+        System.out.println("Marks for Student " + id + " " + fullName + " on discipline " + disciplineName + ":");
+
+        for (Mark mark : Database.marks) {
+            Course course = mark.getCourse();
+
+            if (course.getCourseName().equals(disciplineName)) {
+                System.out.println("Course: " + course.getCourseName() +
+                        ", Grade: " + mark.getMark() +
+                        ", Grade Converted: " + Mark.convertGrade(mark.getMark()) +
+                        ", Grade GPA: " + Mark.convertGradeGPA(mark.getMark()));
             }
         }
     }
 
-    @Override
-    public void viewTranscript(Transcript transcript) {
-        if (transcript != null) {
-            System.out.println("Transcript:");
-            System.out.println(transcript.showTranscript());
-        } else {
-            System.out.println("Transcript not available.");
+    public void viewTranscript() {
+        System.out.println("Transcript for Student " + id + " - " + fullName + ":");
+        for (Mark mark : Database.marks) {
+                Transcript transcript = new Transcript();
+                transcript.idCourse = mark.getCourse().idCourse;
+                transcript.course = mark.getCourse();
+                transcript.credit = mark.getCourse().credit;
+                transcript.ect = mark.getCourse().ect;
+                transcript.mark = mark;
+                transcript.GPA = Mark.convertGradeGPA(mark.getMark());
+
+                System.out.println("Course: " + transcript.course.getCourseName() +
+                        ", Grade: " + transcript.mark.getMark() +
+                        ", GPA: " + transcript.GPA +
+                        ", Credits: " + transcript.credit +
+                        ", ECT: " + transcript.ect);
         }
-    }
-
-    @Override
-    public void rateTeacher(Teacher teacher, double rate) {
-        if (teacher != null) {
-            System.out.println("Rating Teacher " + teacher.fullName + ": " + rate);
-        } else {
-            System.out.println("Rating failed. Invalid teacher.");
-        }
-    }
-
-    @Override
-    public boolean doDiplomaProject() {
-        System.out.println("Diploma project initiated.");
-        return true;
-    }
-
-    @Override
-    public Transcript getTranscript() {
-        // getTranscriptka birdene zhazu kerek
-        // Populate the transcript with relevant information
-        return transcript;
     }
     
-    public String toString() {
-    	return super.toString() + ", Id: " + id + ", FullName: " + fullName + ", School: " + school + ", Period: " + period;
+    public void rateTeacher(Teacher teacher, int rating) {
+        // Check if the teacher is in the database
+        if (Database.teachers.contains(teacher)) {
+            // Perform rating logic
+            if (isValidRating(rating)) {
+                teacher.addRating(rating);
+                System.out.println("Teacher rated successfully!");
+            } else {
+                System.out.println("Invalid rating. Please provide a rating between 0 and 10.");
+            }
+        } else {
+            System.out.println("Teacher not found in the database. Cannot rate.");
+        }
     }
 
-	@Override
-	public void teacherInfo(Vector<Teacher> teacher) {
-		// TODO Auto-generated method stub
-		
-	}
+    private boolean isValidRating(int rating) {
+        // Assuming that a rating is between 0 and 10
+        return rating >= 0 && rating <= 10;
+    }
 	
 }
