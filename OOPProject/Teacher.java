@@ -1,9 +1,4 @@
 package projects;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,9 +58,9 @@ public class Teacher extends Employee implements Serializable {
         }
     }
 	
-    public void sendComplaint(Student student, String complaintText, UrgencyLevel urgencyLevel, Dean dean) {
+    public void sendComplaint(Student student, String complaintText, UrgencyLevel urgencyLevel, Manager manager) {
         Complaint complaint = new Complaint(complaintText, urgencyLevel);
-        dean.receiveComplaint(this, student, complaint);
+        manager.receiveComplaint(this, student, complaint);
     }
 
     
