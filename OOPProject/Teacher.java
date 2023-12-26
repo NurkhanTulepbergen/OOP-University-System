@@ -1,73 +1,92 @@
-package OOPProject;
+package projects;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Vector;
 
-import Stream.Book;
 
-public class Teacher extends Employee{
-	public static Vector<Course> course = new Vector<Course>();
-	public static Vector<Teacher> teachers = new Vector<Teacher>();
-	public UrgencyLevel urgencyLevel;
+public class Teacher extends Employee implements Serializable {
 	public TeacherRank teacherRank;
+	private Vector<Integer> ratings = new Vector<>();
 	
 	public Teacher() {}
 	
-	public Teacher(String login, String password, Language language, String id, String fullName, int salary, UrgencyLevel urgencylevel, TeacherRank teacherRank) {
-		super(login, password, language, id, fullName, salary);
-		this.urgencyLevel = urgencyLevel;
-		this.teacherRank = teacherRank;
+	
+	public Teacher(String login, String password, Language language, String id, String fullName, int salary, TeacherRank teacherRank) {
+	super(login, password, language, id, fullName, salary);
+	this.teacherRank = teacherRank;
 	}
 	
-    public Vector<Student> viewStudents() {
-        Vector<Student> students = new Vector<Student>();
-        for (Course cou : course) {
-            students.addAll(cou.accessStudent);
-        }
-        return students;
-    }
-	public String getId() {
-		return id;
+	public String getTeacherName() {
+		return fullName;
 	}
-    public Vector<Course> viewCourses() {
-        return course;
+
+    public List<Course> viewCourses() {
+        List<Course> coursesTaught = new ArrayList<>();
+        for (Map.Entry<Teacher, Course> entry : DataBase.teacherCourses.entrySet()) {
+            if (entry.getKey().equals(this)) {
+                coursesTaught.add(entry.getValue());
+            }
+        }
+        return coursesTaught;
     }
-    
-    public void sendComplaints(Student student, String complaintText) {
-        System.out.println("Complaint sent to " + student.fullName + ": " + complaintText);//complainttext какой то стринг жазуга болатындай ету керек
+	
+    public void sendComplaint(Student student, String complaintText, UrgencyLevel urgencyLevel, Dean dean) {
+        Complaint complaint = new Complaint(complaintText, urgencyLevel);
+        dean.receiveComplaint(this, student, complaint);
     }
+
     
     public String sendMessage(Employee employee, String messageText) {
-        return "Message sent to " + employee.fullName + ": " + messageText;//messagetext какой то стринг болу керек
+        return "Message sent to " + employee  + ": " + messageText;
     }
     
-    public double putMark(Student student, Course course, Mark mark) {
-        // For example, find the student in the course and assign the mark
-        if (course.accessStudent.contains(student)) {
-            mark.course = course;
-            mark.grade = 85;//мында оценканы сразу 85 етип койды а если 90 койгысы келсе ше?
-            return mark.grade;
+    public void putMark(Student student, Course course, Mark mark) {
+        if (DataBase.teacherCourses.containsKey(this)) {
+            if (DataBase.courses.contains(course)) {
+                if (DataBase.enrolledStudents.containsKey(student)) {
+                    DataBase.marks.add(mark);
+                    System.out.println("Mark added successfully for student " + student.id + " in course " + course.getCourseName());
+                } else {
+                    System.out.println("Error: Student is not enrolled in the specified course.");
+                }
+            } else {
+                System.out.println("Error: Course not found in the database.");
+            }
         } else {
-            System.out.println("Error: Student or course not found.");
-            return -1.0;
+            System.out.println("Error: Teacher is not assigned to the specified course.");
         }
     }
 
-	@Override
-	public String report(String s) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public void addRating(int rating) {
+        if (isValidRating(rating)) {
+            ratings.add(rating);
+            System.out.println("Rating added successfully!");
+        } else {
+            System.out.println("Invalid rating. Please provide a rating between 0 and 10.");
+        }
+    }
+    
+    private boolean isValidRating(int rating) {
+        return rating >= 0 && rating <= 10;
+    }
+    
+    public String toString() {
+    	return " Teacher: " + super.toString() + " Teacher Rank: " + teacherRank;
+    }
+
 
 	@Override
-	public String sendMessage(String s) {
+	public String report() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-    
     
 }
