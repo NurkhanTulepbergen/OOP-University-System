@@ -1,65 +1,81 @@
-package OOPProject;
-import java.util.HashMap;
-import java.util.HashSet;
+package projects;
+import java.io.Serializable;
 import java.util.Vector;
 
-public class Course {
+public class Course implements Serializable {
 	public String disciplineName;
 	public int credit;
 	public int ect;
 	public String idCourse;
-	public static  Vector<Student> accessStudent = new Vector<Student>();
-	public static HashMap<Student, Course> coursesForStudent = new HashMap<Student, Course>();
-	public static HashMap<Teacher, Course> coursesForTeacher = new HashMap<Teacher, Course>();
-	public static HashSet<Course> courses = new HashSet<Course>();
 	public TypeOfCourse typeCourse;
 	private String preRequisite;
-	
-	 // Assuming max enrollment capacity for simplicity
+	public Period period;
+	public String teacher;
     private static final int MAX_ENROLLMENT = 30;
-	
-	public boolean enrollStudent(Student s) {
-        // Check if the course has reached its maximum enrollment capacity
-        if (accessStudent.size() >= MAX_ENROLLMENT) {
-            System.out.println("Enrollment failed. The course is full.");
-            return false;
-        }
-
-        // Check if the student meets prerequisites
-        if (!checkPrerequisite(s)) {
-            System.out.println("Enrollment failed. Prerequisite not satisfied.");
-            return false;
-        }
-
-        // Check if the student is not already enrolled
-        if (!accessStudent.contains(s)) {
-            accessStudent.add(s);
-            System.out.println("Enrolled student: " + s.fullName + " in course: " + disciplineName);
-            return true;
-        } else {
-            System.out.println("Enrollment failed. Student is already enrolled in the course.");
-            return false;
-        }
+    
+    public Course() {}
+    
+    public Course(String disciplineName, int credit, int ect, String idCourse, TypeOfCourse typeCourse, String preRequisite, Period period, String teacher) {
+    	this.disciplineName = disciplineName;
+    	this.credit = credit;
+    	this.ect = ect;
+    	this.idCourse = idCourse;
+    	this.typeCourse = typeCourse;
+    	this.preRequisite = preRequisite;
+    	this.period = period;
+    	this.teacher = teacher;
     }
+    
+    public Course(String disciplineName, int credit, int ect, String idCourse, TypeOfCourse typeCourse, Period period, String teacher) {
+    	this.disciplineName = disciplineName;
+    	this.credit = credit;
+    	this.ect = ect;
+    	this.idCourse = idCourse;
+    	this.typeCourse = typeCourse;
+    	this.preRequisite = null;
+    	this.period = period;
+    	this.teacher = teacher;
+    }
+ 
 
-    public boolean dropStudent(Student s) {
-        // Check if the student is enrolled in the course
-        if (accessStudent.contains(s)) {
-            accessStudent.remove(s);
-            System.out.println("Dropped student: " + s.fullName + " from course: " + disciplineName);
-            return true;
-        } else {
-            System.out.println("Drop failed. Student is not enrolled in the course.");
-            return false;
-        }
+	public String getCourseName() {
+    	return disciplineName;
     }
 	
-    public boolean checkPrerequisite(Student s) {
-        // Check if there is no prerequisite or if the student meets the prerequisite
-        if (preRequisite == null) {
-            return true;
-        } else 
-            return false;
+    public String getPreRequisite() {
+        return preRequisite;
+    }
+
+    public void setPreRequisite(String preRequisite) {
+        this.preRequisite = preRequisite;
+    }
+ 
+    public String getTeacher() {
+    	return teacher;
+    }
+
+    public boolean isFull() {
+        return Database.enrolledStudents.size() >= MAX_ENROLLMENT;
+    }
+    
+    public void enrollStudent(Student studentId) {
+        if (!isFull()) {
+            Database.enrolledStudents.add(studentId);
+            System.out.println("Student " + studentId + " enrolled in course " + idCourse);
+        } else {
+            System.out.println("Course " + idCourse + " is full. Cannot enroll more students.");
+        }
+    }
+    
+    public Vector<Student> getEnrolledStudents() {
+        return Database.enrolledStudents;
+    }
+
+    
+    public String toString() {
+    		return "Course: name: " + disciplineName + ", code: " + idCourse + 
+    				", credits: " + credit + ", prerequisites: " + preRequisite + 
+    				", ects: " + ect + ", elective type: " + typeCourse + " ";
+    }
         
-}
 }
