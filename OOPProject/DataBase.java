@@ -17,4 +17,9 @@ public class DataBase implements Serializable{
 	static Vector<Student> students = new Vector<Student>();
 	static Vector<Teacher> teachers = new Vector<Teacher>();
 	static HashMap<Organizations,Student> organizations = new HashMap<Organizations, Student>();
+	static Vector<Course> registerCourses = new Vector<Course>();
+	static HashMap<Student, Course> enrolledStudents = new HashMap<>();
+	static Vector<Mark> marks = new Vector<Mark>();
+	static Vector<Course> courses = new Vector<Course>();
+	static HashMap<Teacher, Course> teacherCourses = new HashMap<>();
 }
