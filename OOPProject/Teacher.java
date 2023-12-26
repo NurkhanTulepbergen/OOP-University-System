@@ -37,6 +37,31 @@ public class Teacher extends Employee implements Serializable {
         }
         return coursesTaught;
     }
+    
+    public  void viewCoursesTaught(Teacher teacher) {
+        System.out.println("Courses taught by " + teacher.getTeacherName() + ":");
+        List<Course> teacherCourses = teacher.viewCourses();
+        for (Course course : teacherCourses) {
+            System.out.println(course.toString());
+        }
+        System.out.println();
+    }
+    
+    public void viewEnrolledStudentsForCourse(Course course) {
+        System.out.println("Enrolled students in course " + course.getCourseName() + ":");
+        for (Map.Entry<Student, Course> entry : DataBase.enrolledStudents.entrySet()) {
+            Student student = entry.getKey();
+            Course enrolledCourse = entry.getValue();
+
+            if (enrolledCourse.equals(course)) {
+                System.out.println("Student ID: " + student.id +
+                        ", Name: " + student.fullName +
+                        ", Year of Study: " + student.yearOfStudy +
+                        ", School: " + student.school +
+                        ", Course: " + course.getCourseName());
+            }
+        }
+    }
 	
     public void sendComplaint(Student student, String complaintText, UrgencyLevel urgencyLevel, Dean dean) {
         Complaint complaint = new Complaint(complaintText, urgencyLevel);
