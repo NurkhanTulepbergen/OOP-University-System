@@ -10,3 +10,4 @@ public interface StudentMove {
 	void viewTranscript();
 	void rateTeacher(Teacher teacher, int rating);
 }
+
