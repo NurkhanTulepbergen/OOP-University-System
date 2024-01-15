@@ -1,5 +1,7 @@
 package OOPProject;
 
-public enum Organizations {
+import java.io.Serializable;
+
+public enum Organizations implements Serializable{
 	ARTHOUSE, BCL, OSIT, OCTOGRAMMA;
 }

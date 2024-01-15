@@ -1,8 +1,9 @@
-package projects;
+package OOPProject;
 
+import java.io.Serializable;
 import java.util.Vector;
 
-public class Manager extends Employee{
+public class Manager extends Employee implements Serializable{
 	public ManagerType managerType;
 	public Manager() {
 		
@@ -10,14 +11,12 @@ public class Manager extends Employee{
 	
 	public Manager(String login, String password, Language language, String id, String fullName, int salary, ManagerType managerType) {
 		super(login, password, language, id, fullName, salary);
-		this.id = id;
-		this.fullName = fullName;
-		this.salary = salary;
 		this.managerType = managerType;
+		DataBase.managers.add(this);
 	}
 	
     public static void enrollStudent(Student student, Course course) {
-        DataBase.enrolledStudents.put(student, course);
+        DataBase.enrolledStudents.put(course, student);
         System.out.println("Student " + student.getStudentName() + " enrolled in course " + course.getCourseName());
 
 	}
@@ -50,7 +49,7 @@ public class Manager extends Employee{
 			return "Message sent to " + employee  + ": " + textMessage;
 		}
 		
-	    public void receiveComplaint(Teacher teacher, Student student, Complaint complaint) {
+	    public static void receiveComplaint(Teacher teacher, Student student, Complaint complaint) {
 	        switch (complaint.getUrgencyLevel()) {
 	            case LOW:
 	                System.out.println("Dean received a LOW urgency complaint from " + teacher.getTeacherName() +
@@ -76,7 +75,14 @@ public class Manager extends Employee{
 	}//	NADO NAPISAT
 	
 	@Override
-	public String report() {
+	public String report(String s) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String sendMessage(String s) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 

@@ -19,6 +19,6 @@ public abstract class Employee extends User{
 	}
 	public abstract String sendMessage(String s);
 	public String toString() {
-		return super.toString() + ", id:" + id + ", full name: " + ", salary: " + salary;
+		return super.toString() + ", id:" + id + ", full name: " + fullName + ", salary: " + salary;
 	}
 }

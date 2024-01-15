@@ -1,4 +1,6 @@
-public class Mark implements Serializable {
+package OOPProject;
+
+public class Mark {
 	public int grade;
 	public Course course;
 	public int firstAttest;
@@ -7,7 +9,9 @@ public class Mark implements Serializable {
 	public Period semester;
 	
 	public Mark() {};
-	
+	public Mark(int grade) {
+		this.grade = grade;
+	}
 	public Mark(int grade, Course course) {
 		this.grade = grade;
 		this.course = course;

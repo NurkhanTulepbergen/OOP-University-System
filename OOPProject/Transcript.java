@@ -1,6 +1,8 @@
-package projects;
+package OOPProject;
 
-public class Transcript {
+import java.io.Serializable;
+
+public class Transcript implements Serializable{
 	public String idCourse;
 	public Course course;
 	public int credit;
@@ -12,4 +14,3 @@ public class Transcript {
 		return " Course name: " + course + " Mark: " + mark + " GPA: " + GPA;
 	}
 }
-

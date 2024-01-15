@@ -1,9 +1,14 @@
-package projects;
+package OOPProject;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Vector;
 
 
@@ -44,9 +49,9 @@ public class Teacher extends Employee implements Serializable {
     
     public void viewEnrolledStudentsForCourse(Course course) {
         System.out.println("Enrolled students in course " + course.getCourseName() + ":");
-        for (Map.Entry<Student, Course> entry : DataBase.enrolledStudents.entrySet()) {
-            Student student = entry.getKey();
-            Course enrolledCourse = entry.getValue();
+        for (Map.Entry<Course, Student> entry : DataBase.enrolledStudents.entrySet()) {
+            Course enrolledCourse= entry.getKey();
+            Student student = entry.getValue();
 
             if (enrolledCourse.equals(course)) {
                 System.out.println("Student ID: " + student.id +
@@ -58,9 +63,9 @@ public class Teacher extends Employee implements Serializable {
         }
     }
 	
-    public void sendComplaint(Student student, String complaintText, UrgencyLevel urgencyLevel, Manager manager) {
+    public void sendComplaint(Student student, String complaintText, UrgencyLevel urgencyLevel, ManagerType managerType) {
         Complaint complaint = new Complaint(complaintText, urgencyLevel);
-        manager.receiveComplaint(this, student, complaint);
+        Manager.receiveComplaint(this, student, complaint);
     }
 
     
@@ -69,20 +74,15 @@ public class Teacher extends Employee implements Serializable {
     }
     
     public void putMark(Student student, Course course, Mark mark) {
-        if (DataBase.teacherCourses.containsKey(this)) {
-            if (DataBase.courses.contains(course)) {
-                if (DataBase.enrolledStudents.containsKey(student)) {
-                    DataBase.marks.add(mark);
-                    System.out.println("Mark added successfully for student " + student.id + " in course " + course.getCourseName());
-                } else {
-                    System.out.println("Error: Student is not enrolled in the specified course.");
-                }
-            } else {
-                System.out.println("Error: Course not found in the database.");
-            }
-        } else {
-            System.out.println("Error: Teacher is not assigned to the specified course.");
+        if (!DataBase.studentMarks.containsKey(student)) {
+            DataBase.studentMarks.put(student, new HashMap<>());
         }
+
+        DataBase.studentMarks.get(student).put(course, mark);
+        /*System.out.println("Mark added successfully for Student " + student.getStudentName() +
+                " in course " + course.getCourseName() +
+                " - Grade: " + mark.getMark());
+                */
     }
 
     public void addRating(int rating) {
@@ -103,10 +103,24 @@ public class Teacher extends Employee implements Serializable {
     }
 
 
+
 	@Override
-	public String report() {
+	public String report(String s) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+
+	@Override
+	public String sendMessage(String s) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public String getId() {
+		// TODO Auto-generated method stub
+		return id;
 	}
     
 }

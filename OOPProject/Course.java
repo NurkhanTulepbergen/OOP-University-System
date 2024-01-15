@@ -1,5 +1,7 @@
-package projects;
+package OOPProject;
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Vector;
 
 public class Course implements Serializable {

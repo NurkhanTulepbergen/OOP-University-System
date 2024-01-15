@@ -1,8 +1,9 @@
 package OOPProject;
 
+import java.io.Serializable;
 import java.util.Vector;
 
-public class TechSupport extends Employee{
+public class TechSupport extends Employee implements Serializable{
 	public static Vector<TechSupportOrder> newOrder = new Vector<TechSupportOrder>();
 	public static Vector<TechSupportOrder> doneOrder = new Vector<TechSupportOrder>();
 	public TechSupport() {

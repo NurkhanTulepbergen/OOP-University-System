@@ -1,34 +1,33 @@
 package OOPProject;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class ResearchPaper {
+public class ResearchPaper implements Serializable{
 	public String title;
 	public String author;
 	public int pages;
 	public Date date;
 	public String citation;
-	public ResearchPaper() {
-		
-	}
-	public ResearchPaper(String title, String author,int pages, Date date, String citation) {
-		this.title=title;
-		this.author=author;
-		this.pages=pages;
-		this.date=date;
-		this.citation=citation;
+
+	public ResearchPaper(String title, String author,int pages, String citation) {
+		this.title = title;
+		this.author = author;
+		this.pages = pages;
+		this.date = new Date();
+		this.citation = citation;
 	}
 	
-	public String getCitation(Format f2){
-		if(f2.equals(Format.BIBTEX)) {
-			return citation;
-		}else {
-			return citation;
-		}
-	}//NADO DORABOTAT
+	public String getCitation(){
+		return "" + this.citation+", said by:" + this.author;
+	}
 	
     public Date getDate() {
         return date;
+    }
+    
+    public String getTitle() {
+    	return this.title;
     }
 
 }

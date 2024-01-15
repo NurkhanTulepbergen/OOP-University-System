@@ -7,6 +7,6 @@ public class Comparators {
     }
     
     public static Comparator<ResearchPaper> sortByCitations() {
-   	 return Comparator.thenComparing(ResearchPaper::getCitation).reversed();
+   	 return Comparator.comparing(ResearchPaper::getCitation).reversed();
     }
 }

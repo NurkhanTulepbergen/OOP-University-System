@@ -1,9 +1,10 @@
-package projects;
+package OOPProject;
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Vector;
 
-public abstract class Student extends User implements StudentMove, Serializable  {
-	private String id;
+public class Student extends User implements StudentMove, Serializable  {
+	String id;
 	public String fullName;
 	public School school;
 	public int yearOfStudy;
@@ -11,6 +12,7 @@ public abstract class Student extends User implements StudentMove, Serializable 
     private int totalCredits = 0;
     private int totalFailures = 0;
     public String educationalLevel = "Bachelor";
+	Organizations inOrganization;
 	
 	public Student() {}
 	
@@ -28,21 +30,19 @@ public abstract class Student extends User implements StudentMove, Serializable 
 	
 
     @Override
-    public boolean registerCourse(Course course) {
+    public void registerCourse(Course course) {
         if (totalCredits + course.credit <= 21) {
-            Database.courses.add(course);
+            DataBase.registercourses.add(course);
             totalCredits += course.credit;
             System.out.println("Succefull registered course " + course.disciplineName);
-            return true;
         } else {
             System.out.println("Error: Student can't register in more than 21 credits.");
-            return false;
         }
     }
     
     public boolean dropCourse(Course course) {
-        if (Database.courses.contains(course)) {
-            Database.courses.remove(course);
+        if (DataBase.courses.contains(course)) {
+            DataBase.courses.remove(course);
             totalCredits -= course.credit;
             return true;
         } else {
@@ -54,55 +54,65 @@ public abstract class Student extends User implements StudentMove, Serializable 
 
     public void viewCourses() {
         System.out.println("Available Courses:");
-        for (Course course : Database.courses) {
+        for (Course course : DataBase.courses) {
             System.out.println(course.toString());
         }
     }
 
     public void teacherInfo() {
         System.out.println("Teacher Information: ");
-        for(Teacher teacher : Database.teachers) {
+        for(Teacher teacher : DataBase.teachers) {
         	System.out.println(teacher.toString());
         }
     }
 
-    public void viewMarks(String disciplineName) {
-        System.out.println("Marks for Student " + id + " " + fullName + " on discipline " + disciplineName + ":");
+    public void viewMarksForCourse(String disciplineName) {
+        System.out.println("Marks for Student " + id + " " + fullName + " on course " + disciplineName + ":");
 
-        for (Mark mark : Database.marks) {
-            Course course = mark.getCourse();
+        for (Map.Entry<Student, Map<Course, Mark>> entry : DataBase.studentMarks.entrySet()) {
+            Student student = entry.getKey();
+            Map<Course, Mark> marks = entry.getValue();
 
-            if (course.getCourseName().equals(disciplineName)) {
-                System.out.println("Course: " + course.getCourseName() +
-                        ", Grade: " + mark.getMark() +
-                        ", Grade Converted: " + Mark.convertGrade(mark.getMark()) +
-                        ", Grade GPA: " + Mark.convertGradeGPA(mark.getMark()));
+                for (Map.Entry<Course, Mark> markEntry : marks.entrySet()) {
+                    Course course = markEntry.getKey();
+                    Mark mark = markEntry.getValue();
+
+                    if (course.getCourseName().equals(disciplineName)) {
+                        System.out.println("Course: " + course.getCourseName() +
+                                ", Grade: " + mark.getMark() +
+                                ", Grade Converted: " + Mark.convertGrade(mark.getMark()) +
+                                ", Grade GPA: " + Mark.convertGradeGPA(mark.getMark()));
+          
+                }
             }
         }
     }
 
     public void viewTranscript() {
         System.out.println("Transcript for Student " + id + " - " + fullName + ":");
-        for (Mark mark : Database.marks) {
-                Transcript transcript = new Transcript();
-                transcript.idCourse = mark.getCourse().idCourse;
-                transcript.course = mark.getCourse();
-                transcript.credit = mark.getCourse().credit;
-                transcript.ect = mark.getCourse().ect;
-                transcript.mark = mark;
-                transcript.GPA = Mark.convertGradeGPA(mark.getMark());
+        for (Map.Entry<Course, Mark> entry : DataBase.studentMarks.get(this).entrySet()) {
+            Course course = entry.getKey();
+            Mark mark = entry.getValue();
 
-                System.out.println("Course: " + transcript.course.getCourseName() +
-                        ", Grade: " + transcript.mark.getMark() +
-                        ", GPA: " + transcript.GPA +
-                        ", Credits: " + transcript.credit +
-                        ", ECT: " + transcript.ect);
+            Transcript transcript = new Transcript();
+            transcript.idCourse = course.idCourse;
+            transcript.course = course;
+            transcript.credit = course.credit;
+            transcript.ect = course.ect;
+            transcript.mark = mark;
+            transcript.GPA = Mark.convertGradeGPA(mark.getMark());
+
+            System.out.println("Course: " + transcript.course.getCourseName() +
+                    ", Grade: " + transcript.mark.getMark() +
+                    ", GPA: " + transcript.GPA +
+                    ", Credits: " + transcript.credit +
+                    ", ECT: " + transcript.ect);
         }
     }
     
     public void rateTeacher(Teacher teacher, int rating) {
         // Check if the teacher is in the database
-        if (Database.teachers.contains(teacher)) {
+        if (DataBase.teachers.contains(teacher)) {
             // Perform rating logic
             if (isValidRating(rating)) {
                 teacher.addRating(rating);
@@ -119,5 +129,28 @@ public abstract class Student extends User implements StudentMove, Serializable 
         // Assuming that a rating is between 0 and 10
         return rating >= 0 && rating <= 10;
     }
+    public void joinToOrganization(Student s, Organizations o) {
+		DataBase.organizations.put(s, o);		
+		this.inOrganization = o;
+		DataBase.serialize();
+	}
+
+	public String getId() {
+		// TODO Auto-generated method stub
+		return id;
+	}
+	static void printStudentsInOrganization(Organizations organization) {
+        System.out.println("Students in " + organization + ":");
+        for (Map.Entry<Student, Organizations> entry : DataBase.organizations.entrySet()) {
+            if (entry.getValue() == organization) {
+                Student student = entry.getKey();
+                System.out.println("Student Name: " + student.getStudentName());
+            }
+        }
+    }
+	public String toString() {
+		return super.toString() + ", id: " + id + ", Full Name: " + fullName + ", School: " + school + ", Year of study: " + yearOfStudy + "\n";
+	}
+
 	
 }

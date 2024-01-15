@@ -1,6 +1,7 @@
-package projects;
+package OOPProject;
 
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Vector;
 
 public class GraduateStudent implements StudentMove, Serializable {
@@ -40,15 +41,13 @@ public class GraduateStudent implements StudentMove, Serializable {
 	
 
     @Override
-    public boolean registerCourse(Course course) {
+    public void registerCourse(Course course) {
 		if (totalCredits  + course.credit <= 21) {
-            DataBase.courses.add(course);
+            DataBase.registercourses.add(course);
             totalCredits += course.credit;
             System.out.println("Succefull registered course " + course.disciplineName);
-            return true;
         } else {
             System.out.println("Error: Student can't register in more than 21 credits.");
-            return false;
         }
     }
     
@@ -78,37 +77,48 @@ public class GraduateStudent implements StudentMove, Serializable {
         }
     }
 
-    public void viewMarks(String disciplineName) {
-        System.out.println("Marks for Student " + id + " " + fullName + " on discipline " + disciplineName + ":");
+    public void viewMarksForCourse(String disciplineName) {
+        System.out.println("Marks for Student " + id + " " + fullName + " on course " + disciplineName + ":");
 
-        for (Mark mark : DataBase.marks) {
-            Course course = mark.getCourse();
+        for (Map.Entry<Student, Map<Course, Mark>> entry : DataBase.studentMarks.entrySet()) {
+            Student student = entry.getKey();
+            Map<Course, Mark> marks = entry.getValue();
 
-            if (course.getCourseName().equals(disciplineName)) {
-                System.out.println("Course: " + course.getCourseName() +
-                        ", Grade: " + mark.getMark() +
-                        ", Grade Converted: " + Mark.convertGrade(mark.getMark()) +
-                        ", Grade GPA: " + Mark.convertGradeGPA(mark.getMark()));
+            if (student.equals(this)) {
+                for (Map.Entry<Course, Mark> markEntry : marks.entrySet()) {
+                    Course course = markEntry.getKey();
+                    Mark mark = markEntry.getValue();
+
+                    if (course.getCourseName().equals(disciplineName)) {
+                        System.out.println("Course: " + course.getCourseName() +
+                                ", Grade: " + mark.getMark() +
+                                ", Grade Converted: " + Mark.convertGrade(mark.getMark()) +
+                                ", Grade GPA: " + Mark.convertGradeGPA(mark.getMark()));
+                    }
+                }
             }
         }
     }
 
     public void viewTranscript() {
         System.out.println("Transcript for Student " + id + " - " + fullName + ":");
-        for (Mark mark : DataBase.marks) {
-                Transcript transcript = new Transcript();
-                transcript.idCourse = mark.getCourse().idCourse;
-                transcript.course = mark.getCourse();
-                transcript.credit = mark.getCourse().credit;
-                transcript.ect = mark.getCourse().ect;
-                transcript.mark = mark;
-                transcript.GPA = Mark.convertGradeGPA(mark.getMark());
+        for (Map.Entry<Course, Mark> entry : DataBase.studentMarks.get(this).entrySet()) {
+            Course course = entry.getKey();
+            Mark mark = entry.getValue();
 
-                System.out.println("Course: " + transcript.course.getCourseName() +
-                        ", Grade: " + transcript.mark.getMark() +
-                        ", GPA: " + transcript.GPA +
-                        ", Credits: " + transcript.credit +
-                        ", ECT: " + transcript.ect);
+            Transcript transcript = new Transcript();
+            transcript.idCourse = course.idCourse;
+            transcript.course = course;
+            transcript.credit = course.credit;
+            transcript.ect = course.ect;
+            transcript.mark = mark;
+            transcript.GPA = Mark.convertGradeGPA(mark.getMark());
+
+            System.out.println("Course: " + transcript.course.getCourseName() +
+                    ", Grade: " + transcript.mark.getMark() +
+                    ", GPA: " + transcript.GPA +
+                    ", Credits: " + transcript.credit +
+                    ", ECT: " + transcript.ect);
         }
     }
     
